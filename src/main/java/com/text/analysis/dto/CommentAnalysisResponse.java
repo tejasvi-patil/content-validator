@@ -2,27 +2,27 @@
  * @Author patiltejasviv@gmail.com
  * License: MIT
  */
-package com.text.analysis.Response;
+package com.text.analysis.dto;
 
 import java.io.Serializable;
 
 /**
- * Response template for validating user input
+ * dto template for validating user input
  * with offensive words
  */
 public class CommentAnalysisResponse implements Serializable {
 
     private static final long serialVersionUUID = -123L;
 
-    private String containsObjectionableContent;
+    private boolean containsObjectionableContent;
 
     private String message;
 
-    public String getContainsObjectionableContent() {
+    public boolean getContainsObjectionableContent() {
         return containsObjectionableContent;
     }
 
-    public void setContainsObjectionableContent(String containsObjectionableContent) {
+    public void setContainsObjectionableContent(boolean containsObjectionableContent) {
         this.containsObjectionableContent = containsObjectionableContent;
     }
 

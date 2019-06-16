@@ -4,7 +4,7 @@
  */
 package com.text.analysis.service.impl;
 
-import com.text.analysis.Response.CommentAnalysisResponse;
+import com.text.analysis.dto.CommentAnalysisResponse;
 import com.text.analysis.Util.TextAnalysisUtil;
 import com.text.analysis.constants.TextAnalysisConstants;
 import com.text.analysis.service.TextValidator;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Provides service to prevent customers from posting
@@ -45,23 +43,29 @@ public class TextValidatorImpl implements TextValidator {
     @Override
     public CommentAnalysisResponse validateText(String userComment) {
         logger.debug("validateText()-- Validating user comment: {}" , userComment);
-        CommentAnalysisResponse commentAnalysisResponse = null;
-        if(!ObjectUtils.isEmpty(userComment)) {
-            strictMatchMode = Boolean.parseBoolean(this.environment.getProperty("textanalysis.strictMatchMode"));
+        CommentAnalysisResponse commentAnalysisResponse = new CommentAnalysisResponse();
+        if(!ObjectUtils.isEmpty(userComment)) { // Check first the user comment is not empty or null
+            strictMatchMode = Boolean.parseBoolean(this.environment.getProperty("textanalysis.strictMatchMode")); // Get strict mode value.
             logger.debug("strictMatchMode on :{}", strictMatchMode);
-            Set<String> inValidWordContentType = textAnalysisUtil.filterOffensiveContentCategory(userComment, strictMatchMode);
-            commentAnalysisResponse = new CommentAnalysisResponse();
+            Set<String> inValidWordContentType = textAnalysisUtil.filterOffensiveContentCategory(userComment, strictMatchMode); // Analyse the text
             if(!ObjectUtils.isEmpty(inValidWordContentType)) {
                 logger.debug("user comment includes some objectinable content of type :{}" , inValidWordContentType.toString());
-                commentAnalysisResponse.setContainsObjectionableContent(Boolean.TRUE.toString());
+                commentAnalysisResponse.setContainsObjectionableContent(Boolean.TRUE);
                 commentAnalysisResponse.setMessage(TextAnalysisConstants.OBJECTIONAL_CONTENT_FOUND + " :"+inValidWordContentType.toString());
+                logger.info("Successfully analysed comment");
+                return commentAnalysisResponse;
             }
             else {
                 logger.debug("user comment doesnt includes any objectinable content");
-                commentAnalysisResponse.setContainsObjectionableContent(Boolean.FALSE.toString());
+                commentAnalysisResponse.setContainsObjectionableContent(Boolean.FALSE);
                 commentAnalysisResponse.setMessage(TextAnalysisConstants.NO_OBJECTIONAL_CONTENT);
+                logger.info("Successfully analysed comment");
+                return commentAnalysisResponse;
             }
         }
+        logger.debug("User comment if either null or empty");
+        commentAnalysisResponse.setContainsObjectionableContent(Boolean.FALSE);
+        commentAnalysisResponse.setMessage(TextAnalysisConstants.NO_CONTENT);
         return commentAnalysisResponse;
     }
 

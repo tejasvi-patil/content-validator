@@ -4,14 +4,13 @@
  */
 package com.text.analysis.rest;
 
-import com.text.analysis.Response.CommentAnalysisResponse;
+import com.text.analysis.dto.CommentAnalysisRequest;
+import com.text.analysis.dto.CommentAnalysisResponse;
 import com.text.analysis.constants.TextAnalysisConstants;
 import com.text.analysis.service.TextValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -27,9 +26,9 @@ public class TextAnalysisController {
     private final static Logger logger = LoggerFactory.getLogger(TextAnalysisController.class);
 
     @RequestMapping(value = "/validate", method = RequestMethod.POST)
-    public @ResponseBody CommentAnalysisResponse validateText(@RequestParam("userComment") String userComment) {
+    public @ResponseBody CommentAnalysisResponse validateText(@RequestBody CommentAnalysisRequest req) {
         logger.info("validating user comment/feedback- entry");
-        CommentAnalysisResponse commentAnalysisResponse = textValidator.validateText(userComment);
+        CommentAnalysisResponse commentAnalysisResponse = textValidator.validateText(req.getUserComment());
         logger.info("validating user comment/feedback- exit");
         return commentAnalysisResponse;
     }
